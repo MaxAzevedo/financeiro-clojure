@@ -15,7 +15,7 @@
 
 (defroutes app-routes
   (GET "/" [] "Hello World")
-  (GET "/saldo" [] (com-json {:saldo 0}))
+  (GET "/saldo" [] (com-json {:saldo (db/saldo)}))
   (POST "/transacoes" request (-> (db/registrar (:body request))
                                   (com-json 201)))
   (route/not-found "Not Found"))

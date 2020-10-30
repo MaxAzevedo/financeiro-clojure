@@ -2,7 +2,10 @@
   (:require [midje.sweet :refer :all]
             [ring.mock.request :as mock]
             [financeiro.handler :refer :all]
-            [financeiro.db :as db]))
+            [financeiro.db :as db]
+            [cheshire.core :as json]
+  )
+)
 
 (facts "Dá um 'Hellow Wolrd' na rota raiz"
   (fact "o status da resposta é 200"
@@ -25,6 +28,22 @@
     (let [response (app (-> (mock/request :post "/transacoes")
                             (mock/json-body {:valor 10 :tipo "receita"})))]
       (fact "O status da respota é 201" (:status response) => 201)
-      (fact "O corpo é um JSON com conteúdo e id" (:body response) => "{\"id\":1,\"valor\":10,\"tipo\":\"receita\"}")
+      (fact "O corpo é um JSON com conteúdo e id" (:body response) =>
+            "{\"id\":1,\"valor\":10,\"tipo\":\"receita\"}")
     )
+)
+
+(facts "Saldo incial é 0"
+  (against-background [(json/generate-string {:saldo 0}) => "{\"saldo\":0}"
+                       (db/saldo) => 0])
+
+  (let [response (app (mock/request :get "/saldo"))]
+
+    (fact "O formato é aplication/json"
+          (get-in response [:headers "Content-type"]) => "application/json; charset=utf-8")
+
+    (fact "O status da resposta é 200" (:status response) => 200)
+
+    (fact "JSon com chave 'saldo' e valor 0" (:body response) => "{\"saldo\":0}")
+  )
 )
