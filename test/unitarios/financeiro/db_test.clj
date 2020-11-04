@@ -41,6 +41,25 @@
       (db/registrar {:valor 10 :tipo "despesa"})
       (db/saldo) => 0
     )
+  )
+)
 
+(facts "filtra transações por tipo"
+  (def transacoes-aleatorias '({:valor 2 :tipo  "despesa"}
+                               {:valor 10 :tipo  "receita"}
+                               {:valor 200 :tipo  "despesa"}
+                               {:valor 1000 :tipo  "receita"}))
+
+  (against-background [(before :facts [(db/limpar)
+                                       (doseq [transacao transacoes-aleatorias]
+                                         (db/registrar transacao))])]
+
+    (fact "Encontra apenas receita"
+          (db/transacoes-do-tipo "receita") => '({:valor 10 :tipo  "receita"}
+                                                 {:valor 1000 :tipo  "receita"}))
+
+    (fact "Encontra apenas despesas"
+          (db/transacoes-do-tipo "despesa") => '({:valor 2 :tipo  "despesa"}
+                                                 {:valor 200 :tipo  "despesa"}))
   )
 )

@@ -23,4 +23,14 @@
                {:content-type :json :body (json/generate-string {:valor 200 :tipo "receita"})})
     (json/parse-string (conteudo "/saldo") true) => {:saldo 200}
   )
+
+  (fact "O saldo 1000 quando criamos duas receitas de 2000 e uma despesa da 3000" :aceitacao
+    (http/post (endereco-para "/transacoes") (receita 2000))
+    (http/post (endereco-para "/transacoes") (receita 2000))
+    (http/post (endereco-para "/transacoes") (despesa 3000))
+
+    (json/parse-string (conteudo "/saldo") true) => {:saldo 1000}
+  )
+
+
 )

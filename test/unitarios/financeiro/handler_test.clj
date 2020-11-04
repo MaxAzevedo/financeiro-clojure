@@ -47,3 +47,33 @@
     (fact "JSon com chave 'saldo' e valor 0" (:body response) => "{\"saldo\":0}")
   )
 )
+
+(facts "Existe rota para lidar  com filtro  de transação por tipo"
+  (against-background [(db/transacoes-do-tipo "receita") => '({:id 1 :valor 2000 :tipo "receita"})
+                       (db/transacoes-do-tipo "despesa") => '({:id 2 :valor 89 :tipo "despesa"})
+                       (db/transacoes) => '({:id 1 :valor 2000 :tipo "receita"}
+                                            {:id 2 :valor 89 :tipo "despesa"})]
+
+    (fact "Filtro por receita"
+      (let [response (app (mock/request :get "/receitas"))]
+        (:status response) => 200
+        (:body response) => (json/generate-string {:transacoes '({:id 1 :valor 2000 :tipo "receita"})})
+      )
+    )
+
+    (fact "Filtro por despesa"
+      (let [response (app (mock/request :get "/despesas"))]
+        (:status response) => 200
+        (:body response) => (json/generate-string {:transacoes '({:id 2 :valor 89 :tipo "despesa"})})
+      )
+    )
+
+    (fact "Sem filtro"
+      (let [response (app (mock/request :get "/transacoes"))]
+        (:status response) => 200
+        (:body response) => (json/generate-string {:transacoes '({:id 1 :valor 2000 :tipo "receita"}
+                                                                 {:id 2 :valor 89 :tipo "despesa"})})
+      )
+    )
+  )
+)
