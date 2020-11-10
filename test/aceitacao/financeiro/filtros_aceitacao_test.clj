@@ -6,10 +6,10 @@
             [aceitacao.financeiro.auxiliares :refer :all])
 )
 
-(def transacoes-aleatorias '({:valor 7.0M :tipo "despesa"}
-                             {:valor 88.0M :tipo "despesa"}
-                             {:valor 106.0M :tipo "despesa"}
-                             {:valor 8000.0M :tipo "receita"}))
+(def transacoes-aleatorias '({:valor 7.0M :tipo "despesa" :rotulos ["sorvete" "entretenimento"]}
+                             {:valor 88.0M :tipo "despesa" :rotulos ["livro" "educação"]}
+                             {:valor 106.0M :tipo "despesa" :rotulos ["curso" "educação"]}
+                             {:valor 8000.0M :tipo "receita" :rotulos ["salário"]}))
 
 (against-background [(before :facts [(iniciar-servidor porta-padrao) (db/limpar)])
                      (after :facts (parar-servidor))]
@@ -41,5 +41,14 @@
           (count (:transacoes (json/parse-string (conteudo "/transacoes") true))) => 4
           )
     )
+
+    (fact "Existe 1 receita  com rótulo 'salário'"
+          (count (:transacoes (json/parse-string (conteudo "/transacoes?rotulos=salário") true))) => 1)
+
+    (fact "Existem 2 despesas com o rótuli 'livro' e 'curso'"
+          (count (:transacoes (json/parse-string (conteudo "/transacoes?rotulos=livro&rotulos=curso")))) => 2)
+
+    (fact "Existem 2 despesas para o rótulo 'educaçao'"
+          (count (:transacoes (json/parse-string (conteudo "/transacoes?rotulos=educação")))) => 2)
 )
 

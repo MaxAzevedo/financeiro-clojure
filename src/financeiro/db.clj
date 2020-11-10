@@ -33,3 +33,5 @@
   (filter #(= tipo (:tipo %)) (transacoes))
 )
 
+(defn transacoes-com-filtro [filtros] '())
+
