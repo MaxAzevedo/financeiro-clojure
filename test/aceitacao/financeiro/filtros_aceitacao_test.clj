@@ -40,15 +40,15 @@
     (fact "Existe 1 receita" :aceitacao
           (count (:transacoes (json/parse-string (conteudo "/transacoes") true))) => 4
           )
-    )
 
-    (fact "Existe 1 receita  com rótulo 'salário'"
+    (fact "Existe 1 receita  com rótulo 'salário'" :bla
           (count (:transacoes (json/parse-string (conteudo "/transacoes?rotulos=salário") true))) => 1)
 
-    (fact "Existem 2 despesas com o rótuli 'livro' e 'curso'"
-          (count (:transacoes (json/parse-string (conteudo "/transacoes?rotulos=livro&rotulos=curso")))) => 2)
+    (fact "Existem 2 despesas com o rótulo 'livro' e 'curso'" :bla
+          (count (:transacoes (json/parse-string (conteudo "/transacoes?rotulos=livro&rotulos=curso") true))) => 2)
 
-    (fact "Existem 2 despesas para o rótulo 'educaçao'"
-          (count (:transacoes (json/parse-string (conteudo "/transacoes?rotulos=educação")))) => 2)
+    (fact "Existem 2 despesas para o rótulo 'educação'" :bla
+          (count (:transacoes (json/parse-string (conteudo "/transacoes?rotulos=educação") true))) => 2)
+  )
 )
 

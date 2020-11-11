@@ -24,7 +24,16 @@
       (com-json {:mensagem "Requisição inválida"} 422)
     )
   )
-  (GET "/transacoes" [] (com-json {:transacoes (db/transacoes)}))
+  (GET "/transacoes" {filtros :params}
+    (com-json
+      {:transacoes
+        (if (empty? filtros)
+          (db/transacoes)
+          (db/transacoes-com-filtro filtros)
+        )
+      }
+    )
+  )
   (GET "/receitas" [] (com-json {:transacoes (db/transacoes-do-tipo "receita")}))
   (GET "/despesas" [] (com-json {:transacoes (db/transacoes-do-tipo "despesa")}))
   (route/not-found "Not Found"))

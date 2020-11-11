@@ -84,7 +84,7 @@
   (def salario {:id 3 :valor 8000 :tipo "receita" :rotulos ["salário"]})
 
   (against-background [(db/transacoes-com-filtro {:rotulos ["livro" "curso"]}) => [livro curso]
-    (db/transacoes-com-filtro {:rotulos ["salário"]}) => [salario]]
+    (db/transacoes-com-filtro {:rotulos "salário"}) => [salario]]
    (fact "Filtro múltiplos rótulos"
          (let [response (app (mock/request :get "/transacoes?rotulos=livro&rotulos=curso"))]
            (:status response) => 200

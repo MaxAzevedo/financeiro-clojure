@@ -63,3 +63,37 @@
                                                  {:valor 200 :tipo  "despesa"}))
   )
 )
+
+(facts "filtra transações por rótulo"
+  (def transacoes-aleatorias
+    '({:valor 7.0M :tipo "despesa" :rotulos ["sorvete" "entretenimento"]}
+      {:valor 88.0M :tipo "despesa" :rotulos ["livro" "educação"]}
+      {:valor 106.0M :tipo "despesa" :rotulos ["curso" "educação"]}
+      {:valor 8000.0M :tipo "receita" :rotulos ["salário"]})
+  )
+  (against-background
+    [(before :facts
+              [(db/limpar)
+                (doseq [transacao transacoes-aleatorias] (db/registrar transacao))
+              ])]
+
+    (fact "encontra a transação com rótulo 'salário'"
+      (db/transacoes-com-filtro {:rotulos "salário"}) => '({:valor 8000.0M :tipo "receita" :rotulos ["salário"]})
+    )
+    (fact "encontra 2 transações com o rótulo 'educação'"
+      (db/transacoes-com-filtro {:rotulos "educação"}) => '( {:valor 88.0M :tipo "despesa" :rotulos ["livro" "educação"]}
+                                                             {:valor 106.0M :tipo "despesa" :rotulos ["curso" "educação"]})
+    )
+    (fact "encontra 2 transações com o rótulo 'livro' ou 'curso'"
+      (db/transacoes-com-filtro {:rotulos ["livro" "curso"]}) => '({:valor 88.0M :tipo "despesa" :rotulos ["livro" "educação"]}
+                                                            {:valor 106.0M :tipo "despesa" :rotulos ["curso" "educação"]})
+    )
+
+  )
+
+)
+(
+  (
+
+    )
+  )
